@@ -1,37 +1,35 @@
-import sys
-import os
+from DeepClassifier.constant import CONFIG_FILE_PATH, PARAMS_FILE_PATH
+from DeepClassifier.utils import read_yaml, create_directories
+from DeepClassifier.entity import (
+    DataIngestionConfig, 
+    PrepareBaseModelConfig
+)
 from pathlib import Path
-from DeepClassifier.constant import CONFIG_FILE_PATH,PARAMS_FILE_PATH,PROJECT_ROOT_DIR
-from DeepClassifier.utils import  read_yaml, create_directories
-from DeepClassifier.entity import (DataIngestionConfig,PrepareBaseModelConfig)
-sys.path.append(PROJECT_ROOT_DIR)
-
+import os
 
 class ConfigurationManager:
-
-    def __init__(self,
-                 config_filepath = CONFIG_FILE_PATH,
-                 params_filepath = PARAMS_FILE_PATH):
-        
+    def __init__(
+        self, 
+        config_filepath = CONFIG_FILE_PATH,
+        params_filepath = PARAMS_FILE_PATH):
         self.config = read_yaml(config_filepath)
+        self.params = read_yaml(params_filepath)
         create_directories([self.config.artifacts_root])
 
-
-    def get_data_ingestion_config(self)->DataIngestionConfig:
+    def get_data_ingestion_config(self) -> DataIngestionConfig:
         config = self.config.data_ingestion
         
         create_directories([config.root_dir])
 
         data_ingestion_config = DataIngestionConfig(
-            root_dir = Path(config.root_dir),
-            source_URL = config.source_URL,
-            local_data_file = Path(config.local_data_file),
-            unzip_dir = Path(config.unzip_dir)
+            root_dir=config.root_dir,
+            source_URL=config.source_URL,
+            local_data_file=config.local_data_file,
+            unzip_dir=config.unzip_dir 
         )
 
         return data_ingestion_config
-    
-    
+
     def get_prepare_base_model_config(self) -> PrepareBaseModelConfig:
         config = self.config.prepare_base_model
         
